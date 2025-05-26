@@ -30,52 +30,88 @@ public class AddPersonScreen extends JFrame {
         JComboBox<String> monthBox = new JComboBox<>(new String[]{
                 "January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"});
-        JSpinner yearSpinner = new JSpinner(new SpinnerNumberModel(2023, 2000, 2100, 1));
-        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(yearSpinner, "#");
-        yearSpinner.setEditor(editor);
+        JSpinner yearSpinner = UiTheme.yearSpinner();
 
-        JButton addButton = new JButton("Add Person");
-        addButton.setBackground(new Color(60, 100, 180));
-        addButton.setForeground(Color.WHITE);
-        addButton.setFont(new Font("Times New Roman", Font.BOLD, 14));
-        addButton.setFocusPainted(false);
+        JButton addButton = UiTheme.button("Add Person", UiTheme.Kind.GOLD);
 
-        // Layout
-        JPanel panel = new JPanel(new GridLayout(10, 2, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
-        Font labelFont = new Font("Times New Roman", Font.PLAIN, 15);
+        for (JComponent field : new JComponent[]{idField, nameField, ageField, causeField, deathDateField, typeBox, regionBox, monthBox}) {
+            UiTheme.styleField(field);
+        }
 
-        JLabel idLabel = new JLabel("National ID:");
-        idLabel.setFont(labelFont);
-        panel.add(idLabel);
-        panel.add(idField);
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBackground(UiTheme.PAGE);
+        form.setBorder(BorderFactory.createEmptyBorder(4, 28, 8, 28));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(8, 8, 8, 8);
 
-        panel.add(new JLabel("Type:")).setFont(labelFont);
-        panel.add(typeBox);
+        String[] labels = {
+                "National ID", "Type", "Name", "Age", "Cause of death",
+                "Date of death", "Region", "Month", "Year"
+        };
+        JComponent[] fields = {
+                idField, typeBox, nameField, ageField, causeField,
+                deathDateField, regionBox, monthBox, yearSpinner
+        };
+        for (int i = 0; i < labels.length; i++) {
+            JLabel label = UiTheme.label(labels[i], UiTheme.INK);
+            label.setPreferredSize(new Dimension(140, 28));
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            gbc.weightx = 0;
+            gbc.weighty = 0;
+            gbc.fill = GridBagConstraints.NONE;
+            form.add(label, gbc);
 
-        panel.add(new JLabel("Name:")).setFont(labelFont);
-        panel.add(nameField);
+            gbc.gridx = 1;
+            gbc.weightx = 1;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            fields[i].setPreferredSize(new Dimension(320, 36));
+            form.add(fields[i], gbc);
+        }
 
-        panel.add(new JLabel("Age:")).setFont(labelFont);
-        panel.add(ageField);
+        JLabel hint = new JLabel("Date format: DD-MM-YYYY");
+        hint.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        hint.setForeground(new Color(110, 100, 88));
+        gbc.gridx = 1;
+        gbc.gridy = labels.length;
+        gbc.weightx = 1;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 8, 8, 8);
+        form.add(hint, gbc);
 
-        panel.add(new JLabel("Cause of Death:")).setFont(labelFont);
-        panel.add(causeField);
+        gbc.gridy = labels.length + 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        form.add(Box.createVerticalGlue(), gbc);
 
-        panel.add(new JLabel("Date of Death (DD-MM-YYYY):")).setFont(labelFont);
-        panel.add(deathDateField);
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        actions.setBackground(UiTheme.PAGE);
+        actions.setBorder(BorderFactory.createEmptyBorder(8, 28, 20, 36));
+        addButton.setPreferredSize(new Dimension(160, 42));
+        actions.add(addButton);
 
-        panel.add(new JLabel("Region:")).setFont(labelFont);
-        panel.add(regionBox);
+        JLabel title = new JLabel("Add a person");
+        title.setFont(UiTheme.SUBTITLE);
+        title.setForeground(UiTheme.INK);
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(UiTheme.PAGE);
+        header.setBorder(BorderFactory.createEmptyBorder(22, 36, 16, 36));
+        header.add(title, BorderLayout.WEST);
 
-        panel.add(new JLabel("Month:")).setFont(labelFont);
-        panel.add(monthBox);
+        JScrollPane formScroll = new JScrollPane(form);
+        formScroll.setBorder(BorderFactory.createEmptyBorder());
+        formScroll.setBackground(UiTheme.PAGE);
+        formScroll.getViewport().setBackground(UiTheme.PAGE);
+        formScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        formScroll.getVerticalScrollBar().setUnitIncrement(16);
 
-        panel.add(new JLabel("Year:")).setFont(labelFont);
-        panel.add(yearSpinner);
-
-        panel.add(new JLabel());
-        panel.add(addButton);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(UiTheme.PAGE);
+        panel.add(header, BorderLayout.NORTH);
+        panel.add(formScroll, BorderLayout.CENTER);
+        panel.add(actions, BorderLayout.SOUTH);
 
         // Action
         addButton.addActionListener(e -> {
@@ -86,7 +122,11 @@ public class AddPersonScreen extends JFrame {
             String date = deathDateField.getText().trim();
             String region = (String) regionBox.getSelectedItem();
             String month = (String) monthBox.getSelectedItem();
-            int year = (int) yearSpinner.getValue();
+            Integer selectedYear = UiTheme.readYear(yearSpinner, this);
+            if (selectedYear == null) {
+                return;
+            }
+            int year = selectedYear;
 
             // Validate empty fields
             if (id.isEmpty() || name.isEmpty() || cause.isEmpty() || date.isEmpty()) {
@@ -158,9 +198,9 @@ public class AddPersonScreen extends JFrame {
             dispose();
         });
 
-        // Display
-        add(panel);
-        setSize(500, 520);
+        setContentPane(panel);
+        setSize(640, 700);
+        setMinimumSize(new Dimension(560, 640));
         setLocationRelativeTo(null);
         setVisible(true);
     }

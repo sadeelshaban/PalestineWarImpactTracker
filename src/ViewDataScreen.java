@@ -23,41 +23,28 @@ public class ViewDataScreen extends JFrame {
         String[] months = {"January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"};
 
-        // ComboBoxes
         regionComboBox = new JComboBox<>(regions);
-        regionComboBox.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-        regionComboBox.setBackground(new Color(255, 255, 255, 230));
-
         monthComboBox = new JComboBox<>(months);
-        monthComboBox.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-        monthComboBox.setBackground(new Color(255, 255, 255, 230));
+        yearSpinner = UiTheme.yearSpinner();
+        UiTheme.styleField(regionComboBox);
+        UiTheme.styleField(monthComboBox);
 
-        yearSpinner = new JSpinner(new SpinnerNumberModel(2023, 2000, 2100, 1));
-        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(yearSpinner, "#");
-        yearSpinner.setEditor(editor);
-        yearSpinner.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-
-        // Buttons
-        JButton viewButton = new JButton("View Data");
-        styleButton(viewButton, new Color(60, 60, 60));
-
-        editButton = new JButton("Edit Data");
-        styleButton(editButton, new Color(0, 102, 153));
+        JButton viewButton = UiTheme.button("View", UiTheme.Kind.GOLD);
+        editButton = UiTheme.button("Edit", UiTheme.Kind.DARK);
+        deleteButton = UiTheme.button("Delete", UiTheme.Kind.DANGER);
+        backButton = UiTheme.button("Back", UiTheme.Kind.DARK);
         editButton.setEnabled(false);
-
-        deleteButton = new JButton("Delete Data");
-        styleButton(deleteButton, new Color(139, 0, 0));
         deleteButton.setEnabled(false);
 
-        backButton = new JButton("Back");
-        styleButton(backButton, new Color(90, 90, 90));
-
-        // TextArea
         resultArea = new JTextArea(18, 50);
         resultArea.setEditable(false);
-        resultArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        resultArea.setBackground(new Color(245, 245, 245));
+        resultArea.setLineWrap(true);
+        resultArea.setWrapStyleWord(true);
+        UiTheme.styleField(resultArea);
+        resultArea.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        resultArea.setBackground(Color.WHITE);
         JScrollPane scrollPane = new JScrollPane(resultArea);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(196, 186, 166)));
 
         // Actions
         viewButton.addActionListener(e -> displayData());
@@ -91,71 +78,67 @@ public class ViewDataScreen extends JFrame {
             new MainScreen();
         });
 
-        // Layout
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        formPanel.setBackground(new Color(240, 240, 255));
+        JPanel filters = new JPanel(new GridBagLayout());
+        filters.setBackground(UiTheme.PAGE);
+        filters.setBorder(BorderFactory.createEmptyBorder(18, 20, 8, 20));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(4, 8, 4, 8);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        formPanel.add(labelWithFont("Select Region:", 16));
-        formPanel.add(Box.createVerticalStrut(5));
-        formPanel.add(regionComboBox);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        filters.add(UiTheme.label("Region", UiTheme.INK), gbc);
+        gbc.gridx = 1;
+        filters.add(UiTheme.label("Month", UiTheme.INK), gbc);
+        gbc.gridx = 2;
+        filters.add(UiTheme.label("Year", UiTheme.INK), gbc);
 
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(labelWithFont("Select Month:", 16));
-        formPanel.add(Box.createVerticalStrut(5));
-        formPanel.add(monthComboBox);
+        gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.weightx = 1;
+        filters.add(regionComboBox, gbc);
+        gbc.gridx = 1;
+        filters.add(monthComboBox, gbc);
+        gbc.gridx = 2;
+        filters.add(yearSpinner, gbc);
+        gbc.gridx = 3;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        filters.add(viewButton, gbc);
 
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(labelWithFont("Select Year:", 16));
-        formPanel.add(Box.createVerticalStrut(5));
-        formPanel.add(yearSpinner);
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        actions.setBackground(UiTheme.PAGE);
+        actions.setBorder(BorderFactory.createEmptyBorder(4, 20, 14, 20));
+        actions.add(editButton);
+        actions.add(deleteButton);
+        actions.add(backButton);
 
-        formPanel.add(Box.createVerticalStrut(20));
-        viewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        formPanel.add(viewButton);
+        JPanel top = new JPanel(new BorderLayout());
+        top.setBackground(UiTheme.PAGE);
+        top.add(filters, BorderLayout.NORTH);
+        top.add(actions, BorderLayout.SOUTH);
 
-        formPanel.add(Box.createVerticalStrut(10));
-        editButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        formPanel.add(editButton);
+        JPanel page = new JPanel(new BorderLayout(0, 0));
+        page.setBackground(UiTheme.PAGE);
+        page.setBorder(BorderFactory.createEmptyBorder(0, 16, 16, 16));
+        page.add(top, BorderLayout.NORTH);
+        page.add(scrollPane, BorderLayout.CENTER);
+        setContentPane(page);
 
-        formPanel.add(Box.createVerticalStrut(10));
-        deleteButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        formPanel.add(deleteButton);
-
-        formPanel.add(Box.createVerticalStrut(10));
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        formPanel.add(backButton);
-
-        setLayout(new BorderLayout());
-        add(formPanel, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-
-        setSize(750, 600);
+        setSize(820, 620);
         setLocationRelativeTo(null);
         setVisible(true);
-    }
-
-    private void styleButton(JButton btn, Color bg) {
-        btn.setFont(new Font("Times New Roman", Font.BOLD, 15));
-        btn.setBackground(bg);
-        btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setMaximumSize(new Dimension(200, 35));
-    }
-
-    private JLabel labelWithFont(String text, int size) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Times New Roman", Font.BOLD, size));
-        label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return label;
     }
 
     private void displayData() {
         String region = (String) regionComboBox.getSelectedItem();
         String month = (String) monthComboBox.getSelectedItem();
-        int year = (int) yearSpinner.getValue();
+        Integer selectedYear = UiTheme.readYear(yearSpinner, this);
+        if (selectedYear == null) {
+            return;
+        }
+        int year = selectedYear;
 
         currentData = null;
 

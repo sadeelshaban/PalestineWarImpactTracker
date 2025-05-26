@@ -31,9 +31,22 @@ public class AddDataScreen extends JFrame {
         String month = existingData.getMonth();
         int year = existingData.getYear();
 
-        JLabel titleLabel = new JLabel("Enter War Impact Data for " + region + " (" + month + " " + year + ")");
-        titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 18));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("War impact for " + region);
+        titleLabel.setFont(UiTheme.SUBTITLE);
+        titleLabel.setForeground(UiTheme.INK);
+        JLabel subtitleLabel = new JLabel(month + " " + year);
+        subtitleLabel.setFont(UiTheme.BODY);
+        subtitleLabel.setForeground(new Color(110, 100, 88));
+
+        JPanel heading = new JPanel();
+        heading.setLayout(new BoxLayout(heading, BoxLayout.Y_AXIS));
+        heading.setBackground(UiTheme.PAGE);
+        heading.setBorder(BorderFactory.createEmptyBorder(22, 36, 8, 36));
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        heading.add(titleLabel);
+        heading.add(Box.createVerticalStrut(2));
+        heading.add(subtitleLabel);
 
         // Input fields
         JTextField martyrsField = new JTextField(String.valueOf(existingData.getWarStats().getMartyrs()), 10);
@@ -50,35 +63,43 @@ public class AddDataScreen extends JFrame {
         JComboBox<String> borderBox = new JComboBox<>(borderOptions);
         borderBox.setSelectedItem(existingData.getBorderStatus().getStatus());
 
-        JButton confirmButton = new JButton("Confirm");
-        confirmButton.setBackground(new Color(34, 139, 34));
-        confirmButton.setForeground(Color.WHITE);
-        confirmButton.setFont(new Font("Times New Roman", Font.BOLD, 14));
-        confirmButton.setFocusPainted(false);
+        JButton confirmButton = UiTheme.button("Save", UiTheme.Kind.GOLD);
+        confirmButton.setPreferredSize(new Dimension(140, 42));
 
-        // Input layout
-        JPanel inputPanel = new JPanel(new GridLayout(9, 2, 10, 10));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
-        Font labelFont = new Font("Times New Roman", Font.PLAIN, 15);
+        JComponent[] inputs = {
+                martyrsField, woundedField, prisonersField, hospitalsField,
+                patientsField, schoolsField, studentsField, borderBox
+        };
+        for (JComponent input : inputs) {
+            UiTheme.styleField(input);
+        }
 
-        inputPanel.add(new JLabel("Martyrs:")).setFont(labelFont);
-        inputPanel.add(martyrsField);
-        inputPanel.add(new JLabel("Wounded:")).setFont(labelFont);
-        inputPanel.add(woundedField);
-        inputPanel.add(new JLabel("Prisoners:")).setFont(labelFont);
-        inputPanel.add(prisonersField);
-        inputPanel.add(new JLabel("Hospitals Destroyed:")).setFont(labelFont);
-        inputPanel.add(hospitalsField);
-        inputPanel.add(new JLabel("Untreated Patients:")).setFont(labelFont);
-        inputPanel.add(patientsField);
-        inputPanel.add(new JLabel("Schools Destroyed:")).setFont(labelFont);
-        inputPanel.add(schoolsField);
-        inputPanel.add(new JLabel("Displaced Students:")).setFont(labelFont);
-        inputPanel.add(studentsField);
-        inputPanel.add(new JLabel("Border Status:")).setFont(labelFont);
-        inputPanel.add(borderBox);
-        inputPanel.add(new JLabel());
-        inputPanel.add(confirmButton);
+        JPanel inputPanel = new JPanel(new GridBagLayout());
+        inputPanel.setBackground(UiTheme.PAGE);
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(8, 28, 8, 28));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(7, 8, 7, 8);
+
+        String[] labels = {
+                "Martyrs", "Wounded", "Prisoners", "Hospitals destroyed",
+                "Untreated patients", "Schools destroyed", "Displaced students", "Border status"
+        };
+        for (int i = 0; i < labels.length; i++) {
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            gbc.weightx = 0;
+            inputPanel.add(UiTheme.label(labels[i], UiTheme.INK), gbc);
+            gbc.gridx = 1;
+            gbc.weightx = 1;
+            inputPanel.add(inputs[i], gbc);
+        }
+
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        actions.setBackground(UiTheme.PAGE);
+        actions.setBorder(BorderFactory.createEmptyBorder(4, 28, 20, 36));
+        actions.add(confirmButton);
 
         // Confirm action (with manual validation)
         confirmButton.addActionListener(e -> {
@@ -127,12 +148,14 @@ public class AddDataScreen extends JFrame {
             }
         });
 
-        // Frame setup
-        setLayout(new BorderLayout());
-        add(titleLabel, BorderLayout.NORTH);
-        add(inputPanel, BorderLayout.CENTER);
+        JPanel page = new JPanel(new BorderLayout());
+        page.setBackground(UiTheme.PAGE);
+        page.add(heading, BorderLayout.NORTH);
+        page.add(inputPanel, BorderLayout.CENTER);
+        page.add(actions, BorderLayout.SOUTH);
+        setContentPane(page);
 
-        setSize(450, 480);
+        setSize(520, 560);
         setLocationRelativeTo(null);
         setVisible(true);
     }

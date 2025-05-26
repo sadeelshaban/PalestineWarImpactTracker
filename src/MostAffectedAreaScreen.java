@@ -17,31 +17,41 @@ public class MostAffectedAreaScreen extends JFrame {
     public MostAffectedAreaScreen() {
         super("War Impact Summary");
 
-        JLabel titleLabel = new JLabel("War Impact Analysis Summary", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JLabel titleLabel = new JLabel("War impact summary");
+        titleLabel.setFont(UiTheme.SUBTITLE);
+        titleLabel.setForeground(UiTheme.INK);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(22, 24, 12, 24));
 
         resultArea = new JTextArea(20, 50);
         resultArea.setEditable(false);
-        resultArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        resultArea.setLineWrap(true);
+        resultArea.setWrapStyleWord(true);
+        UiTheme.styleField(resultArea);
+        resultArea.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         JScrollPane scrollPane = new JScrollPane(resultArea);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(196, 186, 166)));
 
-        JButton analyzeButton = new JButton("Run Analysis");
-        analyzeButton.setBackground(new Color(60, 60, 60));
-        analyzeButton.setForeground(Color.WHITE);
-        analyzeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
+        JButton analyzeButton = UiTheme.button("Run analysis", UiTheme.Kind.GOLD);
         analyzeButton.addActionListener(e -> runAnalysis());
 
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        bottomPanel.setBackground(UiTheme.PAGE);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(14, 24, 18, 24));
         bottomPanel.add(analyzeButton);
 
-        setLayout(new BorderLayout());
-        add(titleLabel, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        JPanel center = new JPanel(new BorderLayout());
+        center.setBackground(UiTheme.PAGE);
+        center.setBorder(BorderFactory.createEmptyBorder(0, 24, 0, 24));
+        center.add(scrollPane, BorderLayout.CENTER);
 
-        setSize(650, 550);
+        JPanel page = new JPanel(new BorderLayout());
+        page.setBackground(UiTheme.PAGE);
+        page.add(titleLabel, BorderLayout.NORTH);
+        page.add(center, BorderLayout.CENTER);
+        page.add(bottomPanel, BorderLayout.SOUTH);
+        setContentPane(page);
+
+        setSize(680, 560);
         setLocationRelativeTo(null);
         setVisible(true);
     }

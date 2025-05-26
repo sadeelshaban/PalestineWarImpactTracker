@@ -18,120 +18,97 @@ public class WelcomeScreen extends JFrame {
         JLabel backgroundLabel = new JLabel(bgIcon);
         backgroundLabel.setLayout(new BorderLayout());
 
-        // Defining custom colors
-        Color golden = new Color(255, 215, 0);       // Golden for titles and highlights
-        Color overlayBlack = new Color(0, 0, 0, 150); // Transparent black for text background
-
-        // Defining fonts
-        Font titleFont = new Font("Times New Roman", Font.BOLD, 32);
-        Font subtitleFont = new Font("Times New Roman", Font.PLAIN, 22);
-        Font paragraphFont = new Font("Times New Roman", Font.PLAIN, 15);
-        Font warFont = new Font("Times New Roman", Font.PLAIN, 17);
-
-        // Title
         JLabel title = new JLabel("Palestine War Impact", SwingConstants.CENTER);
-        title.setFont(titleFont);
-        title.setForeground(golden);
+        title.setFont(UiTheme.TITLE);
+        title.setForeground(UiTheme.GOLD_SOFT);
 
-        // Subtitle
         JLabel subtitle = new JLabel(
-            "The Impact of the Israeli Occupation and Ongoing War on Palestine",
+            "<html><div style='text-align:center;'>The Impact of the Israeli Occupation and Ongoing War on Palestine</div></html>",
             SwingConstants.CENTER
         );
-        subtitle.setFont(subtitleFont);
-        subtitle.setForeground(golden);
+        subtitle.setFont(UiTheme.SUBTITLE);
+        subtitle.setForeground(UiTheme.GOLD_SOFT);
 
-        // War information paragraph
-        JLabel warInfo = new JLabel("<html><center>The Israeli occupation and the war on Palestine intensified starting October 7, 2023.<br>"
-                + "Since then, Gaza has been under relentless attacks, resulting in thousands of martyrs,<br>"
-                + "the destruction of hospitals, schools, and homes, and the displacement of entire families.</center></html>", SwingConstants.CENTER);
-        warInfo.setFont(warFont);
-        warInfo.setOpaque(true);
-        warInfo.setBackground(overlayBlack);
-        warInfo.setForeground(Color.WHITE);
+        JEditorPane body = new JEditorPane("text/html",
+                "<html><head><style>"
+                        + "body { font-family: 'Segoe UI'; font-size: 14px; color: #FFFFFF; margin: 4px 18px; }"
+                        + "p { text-align: center; margin-top: 0; margin-bottom: 14px; }"
+                        + "</style></head><body>"
+                        + "<p>The history of conflict and displacement in Palestine extends back decades, with 1948 marking a major turning point "
+                        + "that deeply affected generations of Palestinians. Over the years, the region has experienced repeated periods of tension, "
+                        + "displacement, and humanitarian crises.</p>"
+                        + "<p>On October 7, 2023, the situation entered a particularly devastating phase, with widespread destruction and displacement "
+                        + "across Gaza and severe impacts on civilian life and essential infrastructure, including homes, hospitals, schools, "
+                        + "and other vital facilities.</p>"
+                        + "<p>The Palestine War Impact Tracker is an interactive platform created to document and visualize these events through time and place. "
+                        + "It focuses particularly on the period following October 7, 2023, while providing historical context for understanding the events "
+                        + "within a longer timeline.</p>"
+                        + "<p>The platform aims to preserve information about what happened, where, and when, supporting digital documentation, "
+                        + "historical reference, and educational awareness.</p>"
+                        + "<p><i>This application is intended for educational and humanitarian purposes only.</i></p>"
+                        + "</body></html>");
+        Color textBg = new Color(12, 12, 12);
+        body.setEditable(false);
+        body.setOpaque(true);
+        body.setBackground(textBg);
+        body.setBorder(BorderFactory.createEmptyBorder(8, 16, 4, 16));
+        body.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        body.setFont(UiTheme.BODY);
+        body.setForeground(Color.WHITE);
 
-        // Intro paragraph
-        JLabel intro = new JLabel("<html><center>The Palestine War Impact Tracker is an interactive platform designed to document and visualize<br>"
-                + "the timeline of the war on Palestine, region by region, date by date.<br><br>"
-                + "Since the beginning of the conflict, countless Palestinian lives have been affected, cities destroyed, and histories rewritten.<br>"
-                + "This app aims to preserve these stories by showing what happened, where, and when — from the onset of the war until today.<br><br>"
-                + "Our goal is to raise awareness, provide historical context, and support digital archiving<br>"
-                + "of the devastating impact of war on Palestinian cities and people.<br><br>"
-                + "<i>This application is for educational and humanitarian purposes only.<br>"
-                + "We stand in solidarity with the people of Palestine.</i></center></html>", SwingConstants.CENTER);
-        intro.setFont(paragraphFont);
-        intro.setOpaque(true);
-        intro.setBackground(overlayBlack);
-        intro.setForeground(Color.WHITE);
+        JPanel heading = new JPanel();
+        heading.setOpaque(false);
+        heading.setLayout(new BoxLayout(heading, BoxLayout.Y_AXIS));
+        heading.setBorder(BorderFactory.createEmptyBorder(28, 40, 8, 40));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        heading.add(title);
+        heading.add(Box.createVerticalStrut(6));
+        heading.add(subtitle);
 
-        // Description paragraph
-        JLabel description = new JLabel("<html><center>This application presents a humanitarian, educational, and healthcare overview<br>of the ongoing war on Gaza, West Bank, and Jerusalem.</center></html>", SwingConstants.CENTER);
-        description.setFont(paragraphFont);
-        description.setOpaque(true);
-        description.setBackground(overlayBlack);
-        description.setForeground(Color.WHITE);
+        JScrollPane bodyScroll = new JScrollPane(body);
+        bodyScroll.setOpaque(true);
+        bodyScroll.setBackground(textBg);
+        bodyScroll.getViewport().setOpaque(true);
+        bodyScroll.getViewport().setBackground(textBg);
+        bodyScroll.setBorder(BorderFactory.createEmptyBorder());
+        bodyScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        bodyScroll.getVerticalScrollBar().setUnitIncrement(14);
 
-        // Panel for text content
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        textPanel.setOpaque(false); // Transparent background
-        textPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        JPanel textCard = UiTheme.overlayCard();
+        textCard.setLayout(new BorderLayout());
+        textCard.add(bodyScroll, BorderLayout.CENTER);
 
-        // Add components to text panel
-        for (JLabel lbl : new JLabel[]{title, subtitle, warInfo, intro, description}) {
-            lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-            textPanel.add(lbl);
-            textPanel.add(Box.createVerticalStrut(10)); // Add spacing
-        }
+        JPanel textWrap = new JPanel(new BorderLayout());
+        textWrap.setOpaque(false);
+        textWrap.setBorder(BorderFactory.createEmptyBorder(8, 48, 8, 48));
+        textWrap.add(textCard, BorderLayout.CENTER);
 
-        // Buttons
-        JButton exitButton = new JButton("Exit");
-        JButton nextButton = new JButton("Next");
+        JButton exitButton = UiTheme.button("Exit", UiTheme.Kind.DARK);
+        JButton nextButton = UiTheme.button("Next", UiTheme.Kind.GOLD);
+        Dimension buttonSize = new Dimension(140, 42);
+        exitButton.setPreferredSize(buttonSize);
+        nextButton.setPreferredSize(buttonSize);
 
-        // Customize button appearance and hover effect
-        for (JButton button : new JButton[]{exitButton, nextButton}) {
-            button.setFont(paragraphFont);
-            button.setFocusPainted(false);
-            button.setBackground(new Color(60, 60, 60)); // Dark gray background
-            button.setForeground(Color.WHITE);
-            button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-            button.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    button.setBackground(golden); // Highlight on hover
-                    button.setForeground(Color.BLACK);
-                }
-
-                @Override
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    button.setBackground(new Color(60, 60, 60)); // Revert background
-                    button.setForeground(Color.WHITE);
-                }
-            });
-        }
-
-        // Button actions
         exitButton.addActionListener(e -> System.exit(0));
         nextButton.addActionListener(e -> {
             dispose();
-            new MainScreen();  // Go directly to MainScreen on Next
+            new MainScreen();
         });
 
-        // Panel for buttons
-        JPanel buttonPanel = new JPanel(new BorderLayout());
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 14, 0));
         buttonPanel.setOpaque(false);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
-        buttonPanel.add(exitButton, BorderLayout.WEST);
-        buttonPanel.add(nextButton, BorderLayout.EAST);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(8, 24, 22, 36));
+        buttonPanel.add(exitButton);
+        buttonPanel.add(nextButton);
 
-        // Add panels to background
-        backgroundLabel.add(textPanel, BorderLayout.CENTER);
+        backgroundLabel.add(heading, BorderLayout.NORTH);
+        backgroundLabel.add(textWrap, BorderLayout.CENTER);
         backgroundLabel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Frame setup
         setContentPane(backgroundLabel);
-        setSize(950, 650);
+        setSize(1000, 760);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
